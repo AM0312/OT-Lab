@@ -6,6 +6,7 @@ c=input("Cost vector(including slack):");
 pair=nchoosek(1:noOfVariables,noOfConstraints);
 basicFeasibleSolutions=[];
 notBasicFeasible=[];
+flag=true;
 for i=1:length(pair)
     currentSolution=zeros(length(a),1);
     B=a(:,pair(i,:));
@@ -16,6 +17,9 @@ for i=1:length(pair)
         if all(x>=0 & x~=-Inf & x~=Inf)
             currentSolution(pair(i,:))=x;
             basicFeasibleSolutions=[basicFeasibleSolutions currentSolution];
+            if any(x==0)
+                flag=false;
+            end
         else
             currentSolution(pair(i,:))=x;
             notBasicFeasible=[notBasicFeasible currentSolution];
@@ -27,15 +31,7 @@ disp(notBasicFeasible);
 if ~isempty(basicFeasibleSolutions)
     fprintf("Basic Feasible Solutions:\n")
     disp(basicFeasibleSolutions);
-    count=0;
-    for i=1:noOfVariables
-        for j=1:length(basicFeasibleSolutions)
-            if basicFeasibleSolutions(i,j)==0
-                count=count+1;
-            end
-        end
-    end
-    if count>length(basicFeasibleSolutions)*noOfVariables/2
+    if ~flag
         fprintf("Degenerate B.F.S.\n")
     else
         fprintf("Non-Degenerate B.F.S.\n")
