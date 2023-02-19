@@ -36,13 +36,8 @@ if ~isempty(basicFeasibleSolutions)
     else
         fprintf("Non-Degenerate B.F.S.\n")
     end
-% z=c*basicFeasibleSolutions;
-% a=max(z);
-% for i=1:length(z)
-%     if z(i)==a
-%         k=i;
-%         break
-%     end
-% end
-% disp(basicFeasibleSolutions(:,k));
+    disp("Optimal Solution:\n")
+    z=c*basicFeasibleSolutions;
+    [maxz,max_ind]=max(z);
+    disp(basicFeasibleSolutions(:,max_ind));
 end
