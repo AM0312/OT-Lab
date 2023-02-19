@@ -3,25 +3,25 @@ noOfVariables=input("No. of variables(including slack):");
 b=input("Rhs matrix:");
 a=input("Coefficient matrix(including slack):");
 c=input("Cost vector(including slack):");
-pair=nchoosek(1:noOfVariables,noOfConstraints);
+combinations=nchoosek(1:noOfVariables,noOfConstraints);
 basicFeasibleSolutions=[];
 notBasicFeasible=[];
 flag=true;
-for i=1:length(pair)
+for i=1:length(combinations)
     currentSolution=zeros(length(a),1);
-    B=a(:,pair(i,:));
+    B=a(:,combinations(i,:));
     if det(B)==0
         fprintf("Not a Basic Solution\n")
     else 
         x=B\b;
         if all(x>=0 & x~=-Inf & x~=Inf)
-            currentSolution(pair(i,:))=x;
+            currentSolution(combinations(i,:))=x;
             basicFeasibleSolutions=[basicFeasibleSolutions currentSolution];
             if any(x==0)
                 flag=false;
             end
         else
-            currentSolution(pair(i,:))=x;
+            currentSolution(combinations(i,:))=x;
             notBasicFeasible=[notBasicFeasible currentSolution];
         end
     end

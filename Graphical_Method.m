@@ -1,12 +1,10 @@
 x1=0:.1:15;
 
 y1=(8-2*x1)/4;
-
 X_intercept1=[x1(find(y1==0)), y1(find(y1==0))];
 Y_intercept1=[0, y1(find(x1==0))];
 
 y2=(15-3*x1)/5;
-
 X_intercept2=[x1(find(y2==0)), y2(find(y2==0))];
 Y_intercept2=[0, y2(find(x1==0))];
 
@@ -22,17 +20,14 @@ ylim([0 inf]);
 
 intersection=[x1(find(y1==y2)),y1(find(y1==y2))];
 
-hold on
-plot(X_intercept1(1),X_intercept1(2),'-r*','HandleVisibility','off');
-plot(X_intercept2(1),X_intercept2(2),'-r*','HandleVisibility','off');
-plot(Y_intercept1(1),Y_intercept1(2),'-r*','HandleVisibility','off');
-plot(Y_intercept2(1),Y_intercept2(2),'-r*','HandleVisibility','off');
-plot(intersection(1),intersection(2),'-r*','HandleVisibility','off');
-
 extremePoints=[X_intercept1;Y_intercept1;X_intercept2;Y_intercept2;intersection];
-feasiblePoints=[];
-
 disp(extremePoints);
+
+hold on
+for i=1:length(extremePoints)
+    plot(extremePoints(i,1),extremePoints(i,2),'-r*','HandleVisibility','off');
+end
+feasiblePoints=[];
 
 for i=1:5
     if((2*extremePoints(i,1)+4*extremePoints(i,2)<=8)&&(3*extremePoints(i,1)+5*extremePoints(i,2)<=15)&&(extremePoints(i,1)>=0)&&(extremePoints(i,2)>=0))
@@ -55,9 +50,7 @@ if ~isempty(feasiblePoints)
             maxy=feasiblePoints(i,2);
         end
     end
-
     disp([maxx maxy]);
-
 else
     disp("Unfeasible problem");
 end
