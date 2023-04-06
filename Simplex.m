@@ -1,33 +1,42 @@
-noOfVariables=input("Enter no of variables:");
-noOfConstraints=input("Enter no of constraints:");
-A=input("Enter coefficient matrix:");
-b=input("Enter solution matrix (Column form):");
-Z=input("Enter cost vector:");
+noOfConstraints=input("No. of constraints:");
+b=input("Rhs column vector:");
+A=input("Coefficient matrix:");
+Z=input("Cost vector:");
+A=[A eye(noOfConstraints) b];
+Z=[Z zeros(noOfConstraints+1)];
 
-A=[A eye(noOfConstraints,noOfConstraints)];
-Z=[Z zeros(1,noOfConstraints) 0];
-
-% disp(A);
-% disp(Z);
-
-mat=[A b];
-bv=(noOfVariables+1):size(mat,2)-1;
-
-Zrow=Z(bv)*mat-Z;
-ZC=[Zrow;mat];
-
-simplexTable=array2table(ZC);
-simplexTable.Properties.VariableNames(1:size(ZC,2))={'x1','x2','s1','s2','Sol'};
-
-run=true;
-
-while run
-    if any(Zrow<0)
-        disp("Old basic Variables:");
-        disp(bv);
-        ZC=Zrow(1:end-1);
-        [enterCol,pivotCol]=min(ZC);
-        sol=mat(:,end);
-        col=mat(:,pivotCol);
-    end
+cv=zeros(1,noOfConstraints);
+zc=zeros(1,length(A));
+[ARow,ACol]=size(A);
+for i=1:length(zc)
+    zc(i)=cv*A(:,i)-Z(i);
 end
+[zmin,zind]=min(zc(1:ACol-1));
+while zmin<0
+    q=A(:,ACol)./A(:,zind);
+    w=Inf;
+    for i=1:noOfConstraints
+        if q(i)>=0
+            if q(i)<w
+                w=q(i);
+                index=i;
+            end
+        end
+    end
+    cv(index)=Z(zind);
+    multiplier=A(index,zind);
+    for i=1:ACol
+        A(index,i)=A(index,i)/multiplier;
+    end
+    for i=1:ARow
+        if i~=index
+            A(i,:)=A(i,:)-A(i,zind)*A(index,:);
+        end
+    end
+    for i=1:ACol
+        zc(i)=cv*(A(:,i))-Z(i);
+    end
+    [zmin,zind]=min(zc(1:ACol-1));
+end
+disp(A);
+disp(z);
