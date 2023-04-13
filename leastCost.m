@@ -1,28 +1,25 @@
 clc;
 clear;
 % cost=input("Enter cost matrix:");
-% A=input("Enter supply:");
-% B=input("Enter demand:");
-cost = [2 10 4 5;6 12 8 11;3 9 5 7];
-A = [12;25;20];
-B = [25;10;15;5];
-if sum(A)==sum(B)
+% supply=input("Enter supply:");
+% demand=input("Enter demand:");
+if sum(supply)==sum(demand)
     fprintf('Balanced \n');
 else
     fprintf('Unbalanced \n');
-    if sum(A) < sum(B)
-        cost(end+1,:) = zeros(1,size(B,2));
-        A(end+1)=sum(B)-sum(A);
+    if sum(supply) < sum(demand)
+        cost(end+1,:) = zeros(1,size(demand,2));
+        supply(end+1)=sum(demand)-sum(supply);
     else 
-        cost(:,end+1) = zeros(1,size(A,2));
-        B(end+1) = sum(A)-sum(B);
+        cost(:,end+1) = zeros(1,size(supply,2));
+        demand(end+1) = sum(supply)-sum(demand);
     end
     fprintf("New cost matrix:\n");
     disp(cost);
     fprintf("New demand:\n");
-    disp(B');
+    disp(demand');
     fprintf("New supply\n");
-    disp(A);
+    disp(supply);
 end
 Icost = cost;
 X = zeros(size(cost));
@@ -33,14 +30,14 @@ for i=1:m
     for j=1:n
         minCost = min(cost(:));
         [rowIndex,colIndex] = find(minCost==cost);
-        x11 = min(A(rowIndex),B(colIndex));
+        x11 = min(supply(rowIndex),demand(colIndex));
         [alloc,index] = max(x11);
         ii = rowIndex(index);
         jj = colIndex(index);
-        y11 = min(A(ii),B(jj));
+        y11 = min(supply(ii),demand(jj));
         X(ii,jj) = y11;
-        A(ii) = A(ii) - y11;
-        B(jj) = B(jj) - y11;
+        supply(ii) = supply(ii) - y11;
+        demand(jj) = demand(jj) - y11;
         cost(ii,jj) = inf;
     end
 end
