@@ -1,10 +1,10 @@
-a=input("Enter the coefficient matrix including slack and artificial variable at last");
+A=input("Enter the coefficient matrix including slack and artificial variable at last");
 b=input("Enter the r.h.s matrix");
-c1=input("Enter the cost vector excluding slack");
+Z=input("Enter the cost vector excluding slack");
 cc=[];
-c1=[c1 0];
+Z=[Z 0];
 cc2=[];
-cc=input("Engter the cost for first phase");
+cc=input("Enter the cost for first phase");
 for i=1:ar
     cc2=[cc2 0];
 end
@@ -33,7 +33,7 @@ while zmin<0
         end
     end
     cc(index)=0;
-    cc2(index)=c1(zind);
+    cc2(index)=Z(zind);
     div=a(index,zind);
     for i=1:ac
         a(index,i)=a(index,i)/div;
@@ -59,7 +59,7 @@ for i=1:length(cc)
     end
 end
 for i=1:ac
-    z(i)=cc2*(a(:,i))-c1(i);
+    z(i)=cc2*(a(:,i))-Z(i);
 end
 [zmin,zind]=min(z(1:ac-1));
 if flag==true
@@ -74,7 +74,7 @@ if flag==true
             end
         end
     end
-    cc2(index)=c1(zind);
+    cc2(index)=Z(zind);
     div=a(index,zind);
     for i=1:ac
         a(index,i)=a(index,i)/div;
@@ -85,7 +85,7 @@ if flag==true
         end
     end
     for i=1:ac
-        z(i)=cc2*(a(:,i))-c1(i);
+        z(i)=cc2*(a(:,i))-Z(i);
     end
     [zmin,zind]=min(z(1:ac-1));
     end
