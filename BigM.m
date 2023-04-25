@@ -1,32 +1,27 @@
-A=input("Enter the coefficient matrix with slack and artificial variable");
+A=input("Enter the coefficient matrix with slack and artificial variable:");
 b=input("Enter rhs in column form:");
 A=[A b];
-Z=input("Enter the cost vector including slack and artificial variable");
-Z=[Z 0];
-bv=input("Enter the cost of starting basic variables");
+c=input("Enter the cost vector including slack and artificial variable:");
+c=[c 0];
+bv=input("Enter the cost of starting bfs:");
 [ARows,ACols]=size(A);
 ZjCj=zeros(1,ACols);
 for i=1:ACols
-    ZjCj(i)=bv*A(:,i)-Z(i);
-end
-ZjCj=zeros(1,ACols);
-for i=1:ACols
-    ZjCj(i)=bv*(A(:,i))-Z(i);
+    ZjCj(i)=bv*A(:,i)-c(i);
 end
 [zmin,zind]=min(ZjCj(1:ACols-1));
-j=1;
 while zmin<0
-    q=A(:,ACols)./A(:,zind);
+    ratio=A(:,ACols)./A(:,zind);
     w=Inf;
-    for i=1:n
-        if q(i)>=0
-            if q(i)<w
-                w=q(i);
+    for i=1:length(bv)
+        if ratio(i)>=0
+            if ratio(i)<w
+                w=ratio(i);
                 index=i;
             end
         end
     end
-    bv(index)=Z(zind);
+    bv(index)=c(zind);
     div=A(index,zind);
     for i=1:ACols
         A(index,i)=A(index,i)/div;
@@ -37,9 +32,10 @@ while zmin<0
         end
     end
     for i=1:ACols
-        ZjCj(i)=bv*(A(:,i))-Z(i);
+        ZjCj(i)=bv*(A(:,i))-c(i);
     end
     [zmin,zind]=min(ZjCj(1:ACols-1));
 end
 disp(A);
 disp(ZjCj);
+disp(bv);
