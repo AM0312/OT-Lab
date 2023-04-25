@@ -1,30 +1,25 @@
-A=input("Enter the coefficient matrix including slack and artificial variable at last");
-b=input("Enter the r.h.s matrix");
-Z=input("Enter the cost vector excluding slack");
-cc=[];
-Z=[Z 0];
+A=input("Enter the coefficient matrix including slack,surplus and artificial variables:");
+b=input("Enter rhs in column form:");
+A=[A b];
+Z1=input("Enter the cost vector including slack and artificial:");
+Z1=[Z1 0];
 cc2=[];
-cc=input("Enter the cost for first phase");
-for i=1:ar
+[ARows,ACols]=size(A);
+c=input("Enter the cost for first phase with all variables:");
+c=[c 0];
+bv=input("Enter the cost of basic variable for first phase:");
+for i=1:ARows
     cc2=[cc2 0];
 end
-a=[a b];
-[ar,ac]=size(a);
-c=[];
-for i=1:ac-ar-1
-    c=[c 0];
+ZjCj=zeros(1,length(A));
+for i=1:ACols
+    ZjCj(i)=bv*(A(:,i))-c(i);
 end
-c=[c cc];
-c=[c 0];
-z=zeros(1,length(a));
-for i=1:ac
-    z(i)=cc*(a(:,i))-c(i);
-end
-[zmin,zind]=min(z(1:ac-1));
+[zmin,zind]=min(ZjCj(1:ACols-1));
 while zmin<0
-    q=a(:,ac)./a(:,zind);
+    q=A(:,ACols)./A(:,zind);
     w=Inf;
-    for i=1:ar
+    for i=1:ARows
         if q(i)>=0
             if q(i)<w
                 w=q(i);
@@ -32,63 +27,62 @@ while zmin<0
             end
         end
     end
-    cc(index)=0;
-    cc2(index)=Z(zind);
-    div=a(index,zind);
-    for i=1:ac
-        a(index,i)=a(index,i)/div;
-    end
-    for i=1:ar
+    bv(index)=c(zind);
+    cc2(index)=Z1(zind);
+    A(index,:)=A(index,:)/A(index,zind);
+    for i=1:ARows
         if i~=index
-            a(i,:)=a(i,:)-a(i,zind)*a(index,:);
+            A(i,:)=A(i,:)-A(i,zind)*A(index,:);
         end
     end
-    for i=1:ac
-        z(i)=cc*(a(:,i))-c(i);
+    for i=1:ACols
+        ZjCj(i)=bv*(A(:,i))-c(i);
     end
-    [zmin,zind]=min(z(1:ac-1));
+    [zmin,zind]=min(ZjCj(1:ACols-1));
 end
-for i=1:ar
-    a(:,ac-1)=[];
-    [ar,ac]=size(a);
+for i=1:ARows
+    A(:,ACols-1)=[];
+    ZjCj(length(ZjCj))=[];
+    [ARows,ACols]=size(A);
 end
 flag=true;
-for i=1:length(cc)
-    if cc(i)~=0
+for i=1:length(bv)
+    if bv(i)~=0
         flag=false;
     end
 end
-for i=1:ac
-    z(i)=cc2*(a(:,i))-Z(i);
+c2=input("Enter the cost vector for second phase that includes slack and artifical variables:");
+c2=[c2 0];
+for i=1:ACols
+    ZjCj(i)=cc2*(A(:,i))-c2(i);
 end
-[zmin,zind]=min(z(1:ac-1));
+[zmin,zind]=min(ZjCj(1:ACols-1));
 if flag==true
     while zmin<0
-    q=a(:,ac)./a(:,zind);
-    w=Inf;
-    for i=1:ar
-        if q(i)>=0
-            if q(i)<w
-                w=q(i);
-                index=i;
+        q=A(:,ACols)./A(:,zind);
+        w=Inf;
+        for i=1:ARows
+            if q(i)>=0
+                if q(i)<w
+                    w=q(i);
+                    index=i;
+                end
             end
         end
-    end
-    cc2(index)=Z(zind);
-    div=a(index,zind);
-    for i=1:ac
-        a(index,i)=a(index,i)/div;
-    end
-    for i=1:ar
-        if i~=index
-            a(i,:)=a(i,:)-a(i,zind)*a(index,:);
+        cc2(index)=c2(zind);
+        A(index,:)=A(index,:)/A(index,zind);
+        for i=1:ARows
+            if i~=index
+                A(i,:)=A(i,:)-A(i,zind)*A(index,:);
+            end
         end
-    end
-    for i=1:ac
-        z(i)=cc2*(a(:,i))-Z(i);
-    end
-    [zmin,zind]=min(z(1:ac-1));
+        for i=1:ACols
+            ZjCj(i)=cc2*(A(:,i))-c2(i);
+        end
+        [zmin,zind]=min(ZjCj(1:ACols-1));
     end
 else
     fprintf("Infeasible")
 end
+disp(A);
+disp(ZjCj);
